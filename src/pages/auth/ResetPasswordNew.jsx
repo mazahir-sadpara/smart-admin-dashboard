@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import AuthLayout from "../layouts/AuthLayout";
-import { assets } from "../assets/assets";
+import AuthLayout from "../../layouts/AuthLayout";
+import { assets } from "../../assets/assets";
 
 const ResetPasswordNew = () => {
   const [password, setPassword] = useState("");

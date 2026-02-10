@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthLayout from "../layouts/AuthLayout";
-import { assets } from "../assets/assets";
+import { useNavigate, useLocation } from "react-router-dom";
+import AuthLayout from "../../layouts/AuthLayout";
+import { assets } from "../../assets/assets";
 
-const ResetPasswordEmail = () => {
-  const [email, setEmail] = useState("");
+const ResetPasswordOTP = () => {
+  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email } = location.state || {};
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email submitted:", email);
+    console.log("OTP entered:", otp);
 
     // UI flow only
-    navigate("/reset-password/otp", { state: { email } });
+    navigate("/reset-password/new", { state: { email } });
   };
 
   return (
@@ -23,26 +25,26 @@ const ResetPasswordEmail = () => {
           
           {/* Title */}
           <h2 className="mb-3 text-3xl font-semibold text-center text-white">
-            Reset Password
+            Enter OTP
           </h2>
 
           {/* Subtitle */}
           <p className="mb-6 text-center text-sm">
-            Enter your email to receive an OTP
+            We’ve sent a verification code to your email
           </p>
 
           {/* Form */}
           <form onSubmit={handleSubmit}>
-            {/* Email Input */}
+            {/* OTP Input */}
             <div className="mb-6 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
-              <img src={assets.mail_icon} alt="Email Icon" />
+              <img src={assets.lock_icon} alt="OTP Icon" />
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
                 required
-                placeholder="Email"
-                className="bg-transparent outline-none text-white/70 w-full"
+                placeholder="Enter OTP"
+                className="bg-transparent outline-none text-white/70 w-full tracking-widest"
               />
             </div>
 
@@ -51,18 +53,15 @@ const ResetPasswordEmail = () => {
               type="submit"
               className="w-full py-2.5 rounded-full bg-indigo-500 text-white font-medium"
             >
-              Send OTP
+              Verify OTP
             </button>
           </form>
 
-          {/* Back to Login */}
+          {/* Helper Text */}
           <p className="mt-4 text-center text-xs text-gray-400">
-            Remember your password?{" "}
-            <span
-              onClick={() => navigate("/login")}
-              className="cursor-pointer text-blue-400 underline"
-            >
-              Login
+            Didn’t receive the code?{" "}
+            <span className="cursor-pointer text-blue-400 underline">
+              Resend OTP
             </span>
           </p>
         </div>
@@ -71,4 +70,4 @@ const ResetPasswordEmail = () => {
   );
 };
 
-export default ResetPasswordEmail;
+export default ResetPasswordOTP;

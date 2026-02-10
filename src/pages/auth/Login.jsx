@@ -1,15 +1,55 @@
-import { useState } from "react";
-import { assets } from "../assets/assets";
-import AuthLayout from "../layouts/AuthLayout";
+import { useState, useEffect } from "react";
+import { assets } from "../../assets/assets";
+import AuthLayout from "../../layouts/AuthLayout";
 import { useNavigate } from "react-router-dom";
+import { login, signup, getCurrentUser } from "../../fakeDB/auth";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  // Toggle between Login & Sign Up (UI only)
+  // Toggle between Login & Sign Up
   const [state, setState] = useState("Login");
-  const navigate = useNavigate()
-  const handleForgotPassword = ()=>{
-    navigate('/reset-password/email') 
-  }
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const handleForgotPassword = () => {
+    navigate('/reset-password/email');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (state === "Login") {
+      const result = login(email, password);
+      if (result.success) {
+        toast.success(result.message);
+        navigate("/");
+      } else {
+        toast.error(result.message);
+      }
+    } else {
+      if (!name.trim()) {
+        toast.error("Please enter your name");
+        return;
+      }
+      const result = signup(name, email, password);
+      if (result.success) {
+        toast.success(result.message);
+        navigate("/");
+      } else {
+        toast.error(result.message);
+      }
+    }
+  };
 
   return (
     <AuthLayout>
@@ -28,8 +68,8 @@ const Login = () => {
               : "Create your account"}
           </p>
 
-          {/* Form (UI only) */}
-          <form>
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
             {/* Full Name (Sign Up only) */}
             {state === "Sign Up" && (
               <div className="mb-5 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
@@ -37,6 +77,9 @@ const Login = () => {
                 <input
                   type="text"
                   placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
                   className="bg-transparent outline-none text-white/70 w-full"
                 />
               </div>
@@ -48,6 +91,9 @@ const Login = () => {
               <input
                 type="email"
                 placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="bg-transparent outline-none text-white/70 w-full"
               />
             </div>
@@ -58,6 +104,9 @@ const Login = () => {
               <input
                 type="password"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 className="bg-transparent outline-none text-white/70 w-full"
               />
             </div>
@@ -74,7 +123,7 @@ const Login = () => {
 
             {/* Button */}
             <button
-              type="button"
+              type="submit"
               className="w-full py-2.5 rounded-full bg-indigo-500 text-white font-medium"
             >
               {state}
